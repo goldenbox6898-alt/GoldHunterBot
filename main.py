@@ -52,19 +52,19 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if member.status in ["left", "kicked"]:
         await query.edit_message_text("❌ هنوز عضو کانال نیستید.")
-    else:
-        await query.message.reply_text(
-    f"""🥇 Gold Hunter | شکارچی مظنه طلا
+ else:
+    await query.message.reply_text(
+        f"""🥇 Gold Hunter | شکارچی مظنه طلا
 
 سلام {query.from_user.first_name} 🌹
 
 ✅ عضویت شما تایید شد.
 
 یکی از گزینه‌های زیر را انتخاب کنید.""",
-    reply_markup=main_menu(),
-)
+        reply_markup=main_menu(),
+    )
 
-await query.delete_message()
+    await query.delete_message()   
 
 app = Application.builder().token(TOKEN).build()
 
