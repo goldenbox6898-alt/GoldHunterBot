@@ -20,7 +20,8 @@ from datetime import datetime, timedelta
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = "@GoldHunter68980"
 DB = "users.db"
-
+ADMIN_ID = 7913800180
+VIP_LINK = "https://t.me/+gPsx8C4YirZlMWY0"
 
 def init_db():
     conn = sqlite3.connect(DB)
