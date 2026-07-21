@@ -238,7 +238,57 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
+if text == "📈 سیگنال VIP":
 
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT vip, vip_end FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    data = cursor.fetchone()
+
+    conn.close()
+
+
+    if data and data[0] == 1:
+
+        end = data[1]
+
+        if end >= datetime.now().strftime("%Y-%m-%d"):
+
+            await update.message.reply_text(
+                f"""✅ اشتراک VIP شما فعال است.
+
+🔐 ورود به کانال VIP:
+
+{VIP_LINK}
+
+📅 پایان اشتراک:
+{end}"""
+            )
+
+        else:
+
+            await update.message.reply_text(
+                """⛔ اشتراک VIP شما به پایان رسیده.
+
+برای تمدید:
+💎 خرید اشتراک"""
+            )
+
+    else:
+
+        await update.message.reply_text(
+            """⛔ شما اشتراک VIP ندارید.
+
+برای دریافت سیگنال:
+💎 خرید اشتراک"""
+        )
+
+    return
 
     if text == "💎 خرید اشتراک":
 
