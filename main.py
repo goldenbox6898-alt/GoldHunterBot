@@ -34,8 +34,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     await update.message.reply_text(
-        "🥇 به ربات رسمی Gold Hunter خوش آمدید.\n\n✅ عضویت شما تایید شد."
-    )
+    f"""🥇 Gold Hunter | شکارچی مظنه طلا
+
+سلام {user.first_name} 🌹
+
+✅ عضویت شما تایید شد.
+
+یکی از گزینه‌های زیر را انتخاب کنید.""",
+    reply_markup=main_menu(),
+)
 
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -46,9 +53,18 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if member.status in ["left", "kicked"]:
         await query.edit_message_text("❌ هنوز عضو کانال نیستید.")
     else:
-        await query.edit_message_text(
-            "🎉 عضویت شما تایید شد.\n\nبه ربات Gold Hunter خوش آمدید."
-        )
+        await query.message.reply_text(
+    f"""🥇 Gold Hunter | شکارچی مظنه طلا
+
+سلام {query.from_user.first_name} 🌹
+
+✅ عضویت شما تایید شد.
+
+یکی از گزینه‌های زیر را انتخاب کنید.""",
+    reply_markup=main_menu(),
+)
+
+await query.delete_message()
 
 app = Application.builder().token(TOKEN).build()
 
