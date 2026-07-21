@@ -145,7 +145,8 @@ def activate_vip(user_id):
     ))
 
     conn.commit()
-    conn.close()def main_menu():
+    conn.close()
+def main_menu():
 
     keyboard = [
         ["📈 سیگنال VIP", "💎 خرید اشتراک"],
@@ -353,7 +354,8 @@ async def plan_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👤 داود شکوری مقدم
 
 📸 بعد از پرداخت عکس رسید را ارسال کنید."""
-    )async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    )async def receipt(update: Update, context:
+ ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
     photo = update.message.photo[-1]
