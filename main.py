@@ -3,12 +3,13 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     ReplyKeyboardMarkup,
-)
 from telegram.ext import (
     Application,
     CommandHandler,
     CallbackQueryHandler,
+    MessageHandler,
     ContextTypes,
+    filters,
 )
 import os
 
@@ -95,12 +96,41 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.delete_message()
 
+async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
 
+    if text == "💎 خرید اشتراک":
+        await update.message.reply_text(
+            """💎 خرید اشتراک VIP
+
+📅 روزانه
+200,000 تومان
+
+📅 هفتگی
+690,000 تومان
+
+📅 ماهانه
+1,890,000 تومان
+
+💳 شماره کارت:
+
+6219 8619 0960 4646
+
+👤 داود شکوری مقدم
+
+📨 ارسال رسید:
+@MazanhGoldAcademy"""
+        )
+
+    elif text == "☎️ پشتیبانی":
+        await update.message.reply_text(
+            "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
+        )
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
 app.add_handler(
     CallbackQueryHandler(check, pattern="check")
 )
-
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, buttons))
 app.run_polling()
