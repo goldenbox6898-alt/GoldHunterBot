@@ -15,10 +15,48 @@ from telegram.ext import (
 )
 
 import os
-
+import sqlite3
+from datetime import datetime, timedelta
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = "@GoldHunter68980"
+DB = "users.db"
 
+
+def init_db():
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        user_id INTEGER PRIMARY KEY,
+        name TEXT,
+        username TEXT,
+        vip INTEGER DEFAULT 0,
+        vip_end TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+def add_user(user):
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT OR IGNORE INTO users
+    (user_id, name, username)
+    VALUES (?, ?, ?)
+    """,
+    (
+        user.id,
+        user.first_name,
+        user.username
+    ))
+
+    conn.commit()
+    conn.close()
 
 def main_menu():
     keyboard = [
@@ -35,7 +73,7 @@ def main_menu():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-
+    add_user(user)
     member = await context.bot.get_chat_member(CHANNEL, user.id)
 
     if member.status in ["left", "kicked"]:
@@ -155,7 +193,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
         )
 
-
+init_db()
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
