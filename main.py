@@ -229,5 +229,7 @@ app.add_handler(
 app.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, buttons)
 )
-
+app.add_handler(
+    MessageHandler(filters.PHOTO, receipt)
+)
 app.run_polling()
