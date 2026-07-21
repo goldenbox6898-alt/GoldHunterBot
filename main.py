@@ -13,6 +13,7 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
+
 import os
 
 TOKEN = os.getenv("BOT_TOKEN")
@@ -84,45 +85,30 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             "❌ هنوز عضو کانال نیستید."
         )
+
     else:
         await query.message.reply_text(
             f"""🥇 Gold Hunter | شکارچی مظنه طلا
 
 سلام {query.from_user.first_name} 🌹
 
-✅ عضویت شما تایید شد.
-
-یکی از گزینه‌های زیر را انتخاب کنید.""",
+✅ عضویت شما تایید شد.""",
             reply_markup=main_menu(),
         )
 
         await query.delete_message()
 
+
 async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     text = update.message.text
     user = update.effective_user
 
+
     if text == "💎 خرید اشتراک":
+
         await update.message.reply_text(
             """💎 خرید اشتراک VIP
-elif text == "👤 حساب کاربری":
-    user = update.effective_user
-
-    await update.message.reply_text(
-        f"""👤 حساب کاربری
-
-🆔 آیدی:
-{user.id}
-
-👤 نام:
-{user.first_name}
-
-💎 وضعیت اشتراک:
-عادی
-
-🤖 یوزرنیم:
-@{user.username if user.username else "ندارد"}"""
-    )
 
 📅 روزانه
 200,000 تومان
@@ -143,15 +129,43 @@ elif text == "👤 حساب کاربری":
 @MazanhGoldAcademy"""
         )
 
+
+    elif text == "👤 حساب کاربری":
+
+        await update.message.reply_text(
+            f"""👤 حساب کاربری
+
+🆔 آیدی:
+{user.id}
+
+👤 نام:
+{user.first_name}
+
+💎 وضعیت اشتراک:
+عادی
+
+🤖 یوزرنیم:
+@{user.username if user.username else "ندارد"}"""
+        )
+
+
     elif text == "☎️ پشتیبانی":
+
         await update.message.reply_text(
             "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
         )
+
+
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
+
 app.add_handler(
     CallbackQueryHandler(check, pattern="check")
 )
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, buttons))
+
+app.add_handler(
+    MessageHandler(filters.TEXT & ~filters.COMMAND, buttons)
+)
+
 app.run_polling()
