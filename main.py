@@ -592,7 +592,10 @@ app.add_handler(
         filters.PHOTO,
         receipt
     )
+)
 
+
+app.run_polling()
 
 
 
