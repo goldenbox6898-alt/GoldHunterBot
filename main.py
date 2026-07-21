@@ -238,6 +238,10 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
+
+
+
+
 if text == "📈 سیگنال VIP":
 
     conn = sqlite3.connect(DB)
