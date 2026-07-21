@@ -193,7 +193,30 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
         )
+async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    user = update.effective_user
+
+    photo = update.message.photo[-1]
+
+    await context.bot.send_photo(
+        chat_id=ADMIN_ID,
+        photo=photo.file_id,
+        caption=f"""📩 رسید جدید VIP
+
+👤 نام:
+{user.first_name}
+
+🆔 آیدی:
+{user.id}
+
+🤖 یوزرنیم:
+@{user.username if user.username else "ندارد"}"""
+    )
+
+    await update.message.reply_text(
+        "✅ رسید شما ارسال شد.\nپس از بررسی مدیریت، اشتراک فعال می‌شود."
+    )
 init_db()
 app = Application.builder().token(TOKEN).build()
 
