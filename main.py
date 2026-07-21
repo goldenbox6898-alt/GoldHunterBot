@@ -4,6 +4,17 @@ import os
 
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = "@GoldHunter68980"
+def main_menu():
+    keyboard = [
+        ["📈 سیگنال VIP", "💎 خرید اشتراک"],
+        ["👤 حساب کاربری", "👥 دعوت دوستان"],
+        ["📚 آموزش‌ها", "☎️ پشتیبانی"],
+    ]
+
+    return ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
