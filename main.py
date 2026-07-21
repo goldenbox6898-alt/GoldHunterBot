@@ -592,15 +592,7 @@ app.add_handler(
         filters.PHOTO,
         receipt
     )
-)
 
-
-
-app.job_queue.run_repeating(
-    remove_expired_users,
-    interval=3600,
-    first=10
-)
 
 
 
