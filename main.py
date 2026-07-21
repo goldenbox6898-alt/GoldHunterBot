@@ -586,29 +586,31 @@ async def vip_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = int(data.split("_")[1])
 
+
     if data.startswith("vip_"):
 
-    activate_vip(user_id)
+        activate_vip(user_id)
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text=f"""🎉 پرداخت شما تایید شد.
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=f"""🎉 پرداخت شما تایید شد.
 
 ✅ اشتراک VIP فعال گردید.
 
 🔐 لینک ورود به کانال VIP:
 {VIP_LINK}
 """
-    )
+        )
 
-elif data.startswith("reject_"):
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text="""❌ پرداخت شما رد شد.
+    elif data.startswith("reject_"):
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="""❌ پرداخت شما رد شد.
 
 لطفاً با پشتیبانی تماس بگیرید."""
-    )=======================
+        )=======================
 # حذف کاربران منقضی
 #=========================
 
