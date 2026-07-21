@@ -616,9 +616,7 @@ async def vip_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #=========================
 # حذف کاربران منقضی
 #=========================
-=======================
-# حذف کاربران منقضی
-#=========================
+
 
 async def remove_expired_users(context: ContextTypes.DEFAULT_TYPE):
 
