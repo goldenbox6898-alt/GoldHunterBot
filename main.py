@@ -199,10 +199,23 @@ async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     photo = update.message.photo[-1]
 
-    await context.bot.send_photo(
-        chat_id=ADMIN_ID,
-        photo=photo.file_id,
-        caption=f"""📩 رسید جدید VIP
+    keyboard = [
+    [
+        InlineKeyboardButton(
+            "✅ فعال کردن VIP",
+            callback_data=f"vip_{user.id}"
+        ),
+        InlineKeyboardButton(
+            "❌ رد کردن",
+            callback_data=f"reject_{user.id}"
+        )
+    ]
+]
+
+await context.bot.send_photo(
+    chat_id=ADMIN_ID,
+    photo=photo.file_id,
+    caption=f"""📩 رسید جدید VIP
 
 👤 نام:
 {user.first_name}
@@ -211,8 +224,9 @@ async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 {user.id}
 
 🤖 یوزرنیم:
-@{user.username if user.username else "ندارد"}"""
-    )
+@{user.username if user.username else "ندارد"}""",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
 
     await update.message.reply_text(
         "✅ رسید شما ارسال شد.\nپس از بررسی مدیریت، اشتراک فعال می‌شود."
