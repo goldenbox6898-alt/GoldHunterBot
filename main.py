@@ -105,7 +105,24 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text == "💎 خرید اشتراک":
         await update.message.reply_text(
             """💎 خرید اشتراک VIP
+elif text == "👤 حساب کاربری":
+    user = update.effective_user
 
+    await update.message.reply_text(
+        f"""👤 حساب کاربری
+
+🆔 آیدی:
+{user.id}
+
+👤 نام:
+{user.first_name}
+
+💎 وضعیت اشتراک:
+عادی
+
+🤖 یوزرنیم:
+@{user.username if user.username else "ندارد"}"""
+    )
 
 📅 روزانه
 200,000 تومان
