@@ -1,9 +1,21 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup,
+)
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+)
 import os
 
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = "@GoldHunter68980"
+
+
 def main_menu():
     keyboard = [
         ["📈 سیگنال VIP", "💎 خرید اشتراک"],
@@ -13,8 +25,9 @@ def main_menu():
 
     return ReplyKeyboardMarkup(
         keyboard,
-        resize_keyboard=True
+        resize_keyboard=True,
     )
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -23,40 +36,30 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if member.status in ["left", "kicked"]:
         keyboard = [
-            [InlineKeyboardButton("📢 عضویت در کانال", url="https://t.me/GoldHunter68980")],
-            [InlineKeyboardButton("✅ عضو شدم", callback_data="check")]
+            [
+                InlineKeyboardButton(
+                    "📢 عضویت در کانال",
+                    url="https://t.me/GoldHunter68980",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "✅ عضو شدم",
+                    callback_data="check",
+                )
+            ],
         ]
 
         await update.message.reply_text(
             "❌ برای استفاده از ربات ابتدا در کانال رسمی عضو شوید.",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return
 
     await update.message.reply_text(
-    f"""🥇 Gold Hunter | شکارچی مظنه طلا
-
-سلام {user.first_name} 🌹
-
-✅ عضویت شما تایید شد.
-
-یکی از گزینه‌های زیر را انتخاب کنید.""",
-    reply_markup=main_menu(),
-)
-
-async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    member = await context.bot.get_chat_member(CHANNEL, query.from_user.id)
-
-    if member.status in ["left", "kicked"]:
-        await query.edit_message_text("❌ هنوز عضو کانال نیستید.")
- else:
-    await query.message.reply_text(
         f"""🥇 Gold Hunter | شکارچی مظنه طلا
 
-سلام {query.from_user.first_name} 🌹
+سلام {user.first_name} 🌹
 
 ✅ عضویت شما تایید شد.
 
@@ -64,11 +67,40 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=main_menu(),
     )
 
-    await query.delete_message()   
+
+async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    member = await context.bot.get_chat_member(
+        CHANNEL,
+        query.from_user.id,
+    )
+
+    if member.status in ["left", "kicked"]:
+        await query.edit_message_text(
+            "❌ هنوز عضو کانال نیستید."
+        )
+    else:
+        await query.message.reply_text(
+            f"""🥇 Gold Hunter | شکارچی مظنه طلا
+
+سلام {query.from_user.first_name} 🌹
+
+✅ عضویت شما تایید شد.
+
+یکی از گزینه‌های زیر را انتخاب کنید.""",
+            reply_markup=main_menu(),
+        )
+
+        await query.delete_message()
+
 
 app = Application.builder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(check, pattern="check"))
+app.add_handler(
+    CallbackQueryHandler(check, pattern="check")
+)
 
 app.run_polling()
