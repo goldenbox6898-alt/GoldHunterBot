@@ -17,11 +17,15 @@ from telegram.ext import (
 import os
 import sqlite3
 from datetime import datetime, timedelta
+
+
 TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = "@GoldHunter68980"
 DB = "users.db"
+
 ADMIN_ID = 7913800180
 VIP_LINK = "https://t.me/+gPsx8C4YirZlMWY0"
+
 
 def init_db():
     conn = sqlite3.connect(DB)
@@ -59,6 +63,7 @@ def add_user(user):
     conn.commit()
     conn.close()
 
+
 def main_menu():
     keyboard = [
         ["📈 سیگنال VIP", "💎 خرید اشتراک"],
@@ -73,11 +78,17 @@ def main_menu():
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     user = update.effective_user
     add_user(user)
-    member = await context.bot.get_chat_member(CHANNEL, user.id)
+
+    member = await context.bot.get_chat_member(
+        CHANNEL,
+        user.id
+    )
 
     if member.status in ["left", "kicked"]:
+
         keyboard = [
             [
                 InlineKeyboardButton(
@@ -99,6 +110,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+
     await update.message.reply_text(
         f"""🥇 Gold Hunter | شکارچی مظنه طلا
 
@@ -112,6 +124,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     query = update.callback_query
     await query.answer()
 
@@ -121,11 +134,13 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     if member.status in ["left", "kicked"]:
+
         await query.edit_message_text(
             "❌ هنوز عضو کانال نیستید."
         )
 
     else:
+
         await query.message.reply_text(
             f"""🥇 Gold Hunter | شکارچی مظنه طلا
 
@@ -193,29 +208,32 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
         )
+
+
 async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
-
     photo = update.message.photo[-1]
 
-    keyboard = [
-    [
-        InlineKeyboardButton(
-            "✅ فعال کردن VIP",
-            callback_data=f"vip_{user.id}"
-        ),
-        InlineKeyboardButton(
-            "❌ رد کردن",
-            callback_data=f"reject_{user.id}"
-        )
-    ]
-]
 
-await context.bot.send_photo(
-    chat_id=ADMIN_ID,
-    photo=photo.file_id,
-    caption=f"""📩 رسید جدید VIP
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "✅ فعال کردن VIP",
+                callback_data=f"vip_{user.id}"
+            ),
+            InlineKeyboardButton(
+                "❌ رد کردن",
+                callback_data=f"reject_{user.id}"
+            )
+        ]
+    ]
+
+
+    await context.bot.send_photo(
+        chat_id=ADMIN_ID,
+        photo=photo.file_id,
+        caption=f"""📩 رسید جدید VIP
 
 👤 نام:
 {user.first_name}
@@ -225,14 +243,58 @@ await context.bot.send_photo(
 
 🤖 یوزرنیم:
 @{user.username if user.username else "ندارد"}""",
-    reply_markup=InlineKeyboardMarkup(keyboard)
-)
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
 
     await update.message.reply_text(
         "✅ رسید شما ارسال شد.\nپس از بررسی مدیریت، اشتراک فعال می‌شود."
     )
+
+
+async def vip_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+    await query.answer()
+
+    data = query.data
+    user_id = int(data.split("_")[1])
+
+
+    if data.startswith("vip_"):
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=f"""🎉 اشتراک VIP شما فعال شد.
+
+🔐 لینک ورود به کانال VIP:
+
+{VIP_LINK}
+
+🥇 Gold Hunter | شکارچی مظنه طلا🏅"""
+        )
+
+        await query.edit_message_caption(
+            "✅ اشتراک VIP فعال شد."
+        )
+
+
+    elif data.startswith("reject_"):
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="❌ رسید شما تایید نشد."
+        )
+
+        await query.edit_message_caption(
+            "❌ رسید رد شد."
+        )
+
+
 init_db()
+
 app = Application.builder().token(TOKEN).build()
+
 
 app.add_handler(CommandHandler("start", start))
 
@@ -241,9 +303,16 @@ app.add_handler(
 )
 
 app.add_handler(
+    CallbackQueryHandler(vip_action, pattern="^(vip_|reject_)")
+)
+
+app.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, buttons)
 )
+
 app.add_handler(
     MessageHandler(filters.PHOTO, receipt)
 )
+
+
 app.run_polling()
