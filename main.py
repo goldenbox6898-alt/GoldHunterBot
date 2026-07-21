@@ -100,10 +100,12 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
+    user = update.effective_user
 
     if text == "💎 خرید اشتراک":
         await update.message.reply_text(
             """💎 خرید اشتراک VIP
+
 
 📅 روزانه
 200,000 تومان
