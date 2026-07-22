@@ -656,6 +656,8 @@ async def plan_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     plan = query.data.replace("plan_", "")
 
+add_user(query.from_user)
+
     save_plan(
         query.from_user.id,
         plan
