@@ -962,19 +962,21 @@ async def send_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = SIGNAL_TEXT.get(user_id)
 
+
     if not text:
         await query.message.reply_text(
             "❌ سیگنالی برای ارسال وجود ندارد."
         )
         return
-text = f"""
+
+
+    text = f"""
 {text}
 
 ━━━━━━━━━━━━━━
 🥇 Gold Hunter | شکارچی مظنه طلا🏅
 👤 داود شکوری مقدم
 """
-
 
 
     if query.data == "send_public":
