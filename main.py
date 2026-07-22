@@ -1302,11 +1302,16 @@ async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def receive_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-
     user = update.effective_user
 
-if update.message.text == "📢 مدیریت سیگنال":
-    return
+    if update.message.text == "📢 مدیریت سیگنال":
+        return
+
+    if user.id != ADMIN_ID:
+        return
+
+    if user.id not in SIGNAL_TYPE:
+        return
 
     if user.id != ADMIN_ID:
 
