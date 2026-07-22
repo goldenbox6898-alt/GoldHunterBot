@@ -590,6 +590,11 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "👥 دعوت دوستان":
 
+🔗 ثبت نام دریا گلد:
+{DARYA_LINK}
+
+🎁 کد معرف:
+{REF_CODE}
 
         link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
@@ -708,7 +713,7 @@ if result:
     if result[0] == "daily":
             conn.close()
 
-    plan_name = "نامشخص"
+        plan_name = "نامشخص"
 
     if result:
         if result[0] == "daily":
@@ -719,7 +724,6 @@ if result:
 
         elif result[0] == "monthly":
             plan_name = "ماهانه"
-
     keyboard = [
         [
             InlineKeyboardButton(
@@ -1097,6 +1101,12 @@ app.add_handler(
     )
 )
 
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        receive_signal
+    )
+)
 
 app.add_handler(
     MessageHandler(
