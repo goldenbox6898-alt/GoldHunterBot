@@ -980,12 +980,7 @@ app.add_handler(
         pattern="^(vip_|reject_)"
     )
 )
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        receive_signal
-    )
-)
+
 app.add_handler(
     CallbackQueryHandler(
         signal_type,
