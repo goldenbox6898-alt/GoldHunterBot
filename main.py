@@ -38,7 +38,8 @@ VIP_LINK = "https://t.me/+gPsx8C4YirZlMWY0"
 DARYA_LINK = "https://daryagold.com/login?ref=GoldHunter"
 
 REF_CODE = "99013"
-
+SIGNAL_TYPE = {}
+SIGNAL_TEXT = {}
 
 PLANS = {
     "daily": {
@@ -85,30 +86,76 @@ def init_db():
 
         plan TEXT,
 
-        days INTEGER
+        days INTEGER,
 
-    )
+invited_by INTEGER DEFAULT 0,
+
+invited INTEGER DEFAULT 0
+
+)
     """)
 
-    conn.commit()
-    conn.close()
+    try:
+    cursor.execute("ALTER TABLE users ADD COLUMN invited_by INTEGER")
+except:
+    pass
+
+try:
+    cursor.execute("ALTER TABLE users ADD COLUMN invites INTEGER DEFAULT 0")
+except:
+    pass
+
+conn.commit()
+conn.close()
 
 
-def add_user(user):
+def add_user(user, inviter=None):
 
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
 
     cursor.execute("""
-    INSERT OR IGNORE INTO users
-    (user_id,name,username)
-    VALUES(?,?,?)
-    """,
-    (
-        user.id,
-        user.first_name,
-        user.username
-    ))
+    CREATE TABLE IF NOT EXISTS users(
+        user_id INTEGER PRIMARY KEY,
+        name TEXT,
+        username TEXT,
+        vip INTEGER DEFAULT 0,
+        vip_end TEXT,
+        plan TEXT,
+        days INTEGER,
+        invited_by INTEGER,
+        invites INTEGER DEFAULT 0
+    )
+    """)
+
+    cursor.execute(
+        "SELECT user_id FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    exists = cursor.fetchone()
+
+    if not exists:
+
+        cursor.execute(
+            """
+            INSERT INTO users
+            (user_id,name,username,invited_by)
+            VALUES(?,?,?,?)
+            """,
+            (
+                user.id,
+                user.first_name,
+                user.username,
+                inviter
+            )
+        )
+
+        if inviter:
+            cursor.execute(
+                "UPDATE users SET invites=invites+1 WHERE user_id=?",
+                (inviter,)
+            )
 
     conn.commit()
     conn.close()
@@ -179,6 +226,8 @@ def main_menu():
 
         ["📚 آموزش‌ها", "☎️ پشتیبانی"],
 
+        ["📢 مدیریت سیگنال"]
+
     ]
 
     return ReplyKeyboardMarkup(
@@ -195,7 +244,55 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
 
-    add_user(user)
+add_user(user)
+
+# ثبت دعوت کننده
+if context.args:
+
+    try:
+
+        inviter_id = int(context.args[0])
+
+        if inviter_id != user.id:
+
+            conn = sqlite3.connect(DB)
+            cursor = conn.cursor()
+
+            cursor.execute(
+                "SELECT invited_by FROM users WHERE user_id=?",
+                (user.id,)
+            )
+
+            result = cursor.fetchone()
+
+            if result and result[0] == 0:
+
+                cursor.execute(
+                    """
+                    UPDATE users
+                    SET invited_by=?
+                    WHERE user_id=?
+                    """,
+                    (
+                        inviter_id,
+                        user.id
+                    )
+                )
+
+                cursor.execute(
+                    """
+                    UPDATE users
+                    SET invited=invited+1
+                    WHERE user_id=?
+                    """,
+                    (inviter_id,)
+                )
+
+            conn.commit()
+            conn.close()
+
+    except:
+        pass
 
     member = await context.bot.get_chat_member(
         CHANNEL,
@@ -278,7 +375,42 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
+    # =========================
+    # مدیریت سیگنال (فقط ادمین)
+    # =========================
 
+    if text == "📢 مدیریت سیگنال":
+
+        if user.id != ADMIN_ID:
+            await update.message.reply_text(
+                "⛔ شما دسترسی مدیریت ندارید."
+            )
+            return
+
+        keyboard = [
+
+            [
+                InlineKeyboardButton(
+                    "🟢 ارسال سیگنال خرید",
+                    callback_data="send_buy"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    "🔴 ارسال سیگنال فروش",
+                    callback_data="send_sell"
+                )
+            ]
+
+        ]
+
+        await update.message.reply_text(
+            "📢 نوع سیگنال را انتخاب کنید:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+        return
     # =========================
     # سیگنال VIP
     # =========================
@@ -418,38 +550,45 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # دعوت دوستان
     # =========================
 
-    elif text == "👥 دعوت دوستان":
+        elif text == "👥 دعوت دوستان":
+
+        conn = sqlite3.connect(DB)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT invited FROM users WHERE user_id=?",
+            (user.id,)
+        )
+
+        result = cursor.fetchone()
+        conn.close()
+
+        invited = result[0] if result else 0
+
+        invite_link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
         keyboard = [
-
             [
                 InlineKeyboardButton(
-                    "🥇 کانال رسمی Gold Hunter",
-                    url="https://t.me/GoldHunter68980"
-                )
-            ],
-
-            [
-                InlineKeyboardButton(
-                    "💰 ثبت‌نام در دریا گلد",
+                    "🚀 ثبت نام در دریا گلد",
                     url=DARYA_LINK
                 )
             ]
-
         ]
 
         await update.message.reply_text(
-            f"""👥 دوستانت را دعوت کن.
+            f"""🎁 سیستم دعوت دوستان
 
-🥇 کانال رسمی:
-https://t.me/GoldHunter68980
+👥 تعداد دعوت‌های موفق:
+{invited}
 
-💰 ثبت‌نام در دریا گلد
+🔗 لینک اختصاصی شما:
 
-🆔 کد معرف:
-{REF_CODE}
+{invite_link}
 
-با ثبت‌نام از طریق لینک بالا، کد معرف به صورت خودکار ثبت می‌شود.""",
+با هر دعوت موفق امتیاز دریافت می‌کنید.
+
+پس از تکمیل شرایط، هدیه ویژه Gold Hunter برای شما فعال خواهد شد.""",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
@@ -665,12 +804,49 @@ async def remove_expired_users(context: ContextTypes.DEFAULT_TYPE):
     conn.commit()
     conn.close()
 
+#=========================
+# دریافت نوع سیگنال
+#=========================
 
+async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+    user_id = query.from_user.id
+
+    if user_id != ADMIN_ID:
+        return
+
+
+    if query.data == "send_buy":
+
+        SIGNAL_TYPE[user_id] = "🟢 خرید"
+
+    elif query.data == "send_sell":
+
+        SIGNAL_TYPE[user_id] = "🔴 فروش"
+
+
+    await query.message.reply_text(
+        f"""✅ نوع سیگنال انتخاب شد:
+
+{SIGNAL_TYPE[user_id]}
+
+حالا متن کامل سیگنال را ارسال کنید."""
+    )
 #=========================
 # اجرای ربات
 #=========================
 
 init_db()
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS referrals(
+    inviter INTEGER,
+    invited INTEGER UNIQUE
+)
+""")
 
 app = Application.builder().token(TOKEN).build()
 
@@ -702,7 +878,12 @@ app.add_handler(
         pattern="^(vip_|reject_)"
     )
 )
-
+app.add_handler(
+    CallbackQueryHandler(
+        signal_type,
+        pattern="^(send_buy|send_sell)$"
+    )
+)
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
