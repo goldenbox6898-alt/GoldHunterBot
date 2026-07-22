@@ -1303,7 +1303,8 @@ async def receive_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
 
-
+if update.message.text == "📢 مدیریت سیگنال":
+    return
 
     if user.id != ADMIN_ID:
 
@@ -1671,15 +1672,11 @@ app.add_handler(
 
 
 app.add_handler(
-
     MessageHandler(
-
         filters.TEXT & ~filters.COMMAND,
-
         buttons
-
-    )
-
+    ),
+    group=0
 )
 
 
@@ -1692,15 +1689,11 @@ app.add_handler(
 
 
 app.add_handler(
-
     MessageHandler(
-
         filters.TEXT & ~filters.COMMAND,
-
         receive_signal
-
-    )
-
+    ),
+    group=1
 )
 
 
