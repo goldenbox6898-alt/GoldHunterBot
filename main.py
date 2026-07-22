@@ -1050,6 +1050,14 @@ app.add_handler(
         pattern="^(send_buy|send_sell)$"
     )
 )
+
+app.add_handler(
+    CallbackQueryHandler(
+        send_signal,
+        pattern="^(send_public|send_vip|send_both)$"
+    )
+)
+
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
