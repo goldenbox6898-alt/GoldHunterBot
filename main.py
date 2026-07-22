@@ -787,18 +787,34 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # =========================
 
 
-    elif text == "👥 دعوت دوستان":
-
+        elif text == "👥 دعوت دوستان":
 
 
         link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
 
+        keyboard = [
+
+            [
+                InlineKeyboardButton(
+                    "📢 دعوت دوستان به کانال عمومی",
+                    url="https://t.me/GoldHunter68980"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    "🌊 ثبت نام دریا گلد",
+                    url=DARYA_LINK
+                )
+            ]
+
+        ]
+
 
         conn = sqlite3.connect(DB)
 
         cursor = conn.cursor()
-
 
 
         cursor.execute(
@@ -816,41 +832,30 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.close()
 
 
-
         count = result[0] if result else 0
-
-
 
 
 
         await update.message.reply_text(
 
-
             f"""🎁 سیستم دعوت دوستان
 
 
-👥 تعداد دعوت:
+👥 تعداد دعوت موفق:
 
 {count}
 
 
-🔗 لینک اختصاصی شما:
 
+🔗 لینک اختصاصی ربات شما:
 
 {link}
 
 
-🌊 ثبت نام دریا گلد:
 
-{DARYA_LINK}
+با دعوت دوستان و ثبت‌نام از لینک شما، هدیه دریافت کنید 🌹""",
 
-
-🎁 کد معرف:
-
-{REF_CODE}
-
-
-با دعوت دوستان هدیه دریافت کنید."""
+            reply_markup=InlineKeyboardMarkup(keyboard)
 
         )
 
