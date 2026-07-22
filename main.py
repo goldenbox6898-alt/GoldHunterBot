@@ -808,8 +808,17 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👥 تعداد دعوت:
 {count}
 
-🔗 لینک اختصاصی شما:
+🔗 لینک اختصاصی کانال:
 {link}
+
+🌊 ثبت نام دریا گلد:
+{DARYA_LINK}
+
+🎁 کد معرف:
+{REF_CODE}
+
+با دعوت دوستان هدیه دریافت کنید."""
+    )
 
 
 
