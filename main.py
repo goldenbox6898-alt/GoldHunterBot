@@ -782,30 +782,29 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-    # =========================
+        # =========================
     # دعوت دوستان
     # =========================
 
+    elif text == "👥 دعوت دوستان":
 
-        elif text == "👥 دعوت دوستان":
+        link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
-    link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
+        conn = sqlite3.connect(DB)
+        cursor = conn.cursor()
 
-    conn = sqlite3.connect(DB)
-    cursor = conn.cursor()
+        cursor.execute(
+            "SELECT invites FROM users WHERE user_id=?",
+            (user.id,)
+        )
 
-    cursor.execute(
-        "SELECT invites FROM users WHERE user_id=?",
-        (user.id,)
-    )
+        result = cursor.fetchone()
+        conn.close()
 
-    result = cursor.fetchone()
-    conn.close()
+        count = result[0] if result else 0
 
-    count = result[0] if result else 0
-
-    await update.message.reply_text(
-        f"""🎁 سیستم دعوت دوستان
+        await update.message.reply_text(
+            f"""🎁 سیستم دعوت دوستان
 
 👥 تعداد دعوت:
 {count}
@@ -820,7 +819,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 {REF_CODE}
 
 با دعوت دوستان هدیه دریافت کنید."""
-    )
+        )
 
 
 
