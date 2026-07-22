@@ -884,26 +884,16 @@ async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     ]
 
-]
+    ]
 
-
-await query.message.reply_text(
-    f"""✅ نوع سیگنال انتخاب شد:
+    await query.message.reply_text(
+        f"""✅ نوع سیگنال انتخاب شد:
 
 {SIGNAL_TYPE[user_id]}
 
 حالا مقصد ارسال را انتخاب کنید:""",
-    
-
-
-
-
-
-
-
-
-reply_markup=InlineKeyboardMarkup(keyboard)
-)
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 #=========================
 # دریافت متن سیگنال
 #=========================
