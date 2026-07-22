@@ -1070,17 +1070,17 @@ app.add_handler(
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
-        receive_signal,
-        group=1
-    )
+        receive_signal
+    ),
+    group=1
 )
 
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
-        buttons,
-        group=2
-    )
+        buttons
+    ),
+    group=2
 )
 
 
