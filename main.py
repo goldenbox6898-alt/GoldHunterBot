@@ -873,12 +873,7 @@ async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #=========================
 
 init_db()
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS referrals(
-    inviter INTEGER,
-    invited INTEGER UNIQUE
-)
-""")
+
 
 app = Application.builder().token(TOKEN).build()
 
