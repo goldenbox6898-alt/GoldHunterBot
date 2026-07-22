@@ -967,6 +967,13 @@ async def send_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ سیگنالی برای ارسال وجود ندارد."
         )
         return
+text = f"""
+{text}
+
+━━━━━━━━━━━━━━
+🥇 Gold Hunter | شکارچی مظنه طلا🏅
+👤 داود شکوری مقدم
+"""
 
 
 
