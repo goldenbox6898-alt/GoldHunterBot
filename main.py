@@ -586,15 +586,15 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #=========================
     # دعوت دوستان
     #=========================
-
-
-    elif text == "👥 دعوت دوستان":
-
-🔗 ثبت نام دریا گلد:
+🌊 ثبت نام دریا گلد:
 {DARYA_LINK}
 
 🎁 کد معرف:
 {REF_CODE}
+
+با دعوت دوستان هدیه دریافت کنید."""
+
+    elif text == "👥 دعوت دوستان":
 
         link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
@@ -713,7 +713,7 @@ if result:
     if result[0] == "daily":
             conn.close()
 
-        plan_name = "نامشخص"
+            plan_name = "نامشخص"
 
     if result:
         if result[0] == "daily":
