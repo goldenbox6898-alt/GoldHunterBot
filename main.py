@@ -825,6 +825,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
+
     # =========================
     # آموزش‌ها
     # =========================
