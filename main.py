@@ -42,7 +42,7 @@ REF_CODE = "99013"
 
 SIGNAL_TYPE = {}
 SIGNAL_TEXT = {}
-
+SIGNAL_TARGET = {}
 
 PLANS = {
 
@@ -861,12 +861,88 @@ async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
         SIGNAL_TYPE[user_id] = "🔴 فروش"
 
 
-    await query.message.reply_text(
-        f"""✅ نوع سیگنال انتخاب شد:
+    keyboard = [
+
+    [
+        InlineKeyboardButton(
+            "📢 کانال عمومی",
+            callback_data="target_public"
+        )
+    ],
+
+    [
+        InlineKeyboardButton(
+            "💎 کانال VIP",
+            callback_data="target_vip"
+        )
+    ],
+
+    [
+        InlineKeyboardButton(
+            "🔥 هر دو کانال",
+            callback_data="target_both"
+        )
+    ]
+
+]
+
+
+await query.message.reply_text(
+    f"""✅ نوع سیگنال انتخاب شد:
 
 {SIGNAL_TYPE[user_id]}
 
-حالا متن کامل سیگنال را ارسال کنید."""
+حالا مقصد ارسال را انتخاب کنید:""",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
+#=========================
+# دریافت متن سیگنال
+#=========================
+
+async def receive_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = update.effective_user
+
+    if user.id != ADMIN_ID:
+        return
+
+    if user.id not in SIGNAL_TYPE:
+        return
+
+
+    SIGNAL_TEXT[user.id] = update.message.text
+
+
+    keyboard = [
+
+        [
+            InlineKeyboardButton(
+                "📢 ارسال عمومی",
+                callback_data="send_public"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🔐 ارسال VIP",
+                callback_data="send_vip"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🚀 ارسال هر دو",
+                callback_data="send_both"
+            )
+        ]
+
+    ]
+
+
+    await update.message.reply_text(
+        "✅ سیگنال دریافت شد.\n\n"
+        "انتخاب کنید کجا ارسال شود:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 #=========================
 # اجرای ربات
@@ -903,6 +979,12 @@ app.add_handler(
     CallbackQueryHandler(
         vip_action,
         pattern="^(vip_|reject_)"
+    )
+)
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        receive_signal
     )
 )
 app.add_handler(
