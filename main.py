@@ -809,7 +809,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👥 تعداد دعوت:
 {count}
 
-🔗 لینک اختصاصی کانال:
+🔗 لینک اختصاصی شما:
 {link}
 
 🌊 ثبت نام دریا گلد:
