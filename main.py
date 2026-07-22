@@ -648,18 +648,19 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #=========================
 # انتخاب پلن
 #=========================
-
 async def plan_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
     await query.answer()
 
+    user = query.from_user
+
+    add_user(user)
+
     plan = query.data.replace("plan_", "")
 
-add_user(query.from_user)
-
     save_plan(
-        query.from_user.id,
+        user.id,
         plan
     )
 
@@ -680,8 +681,6 @@ add_user(query.from_user)
 
 📸 لطفاً پس از پرداخت، عکس رسید را برای ربات ارسال کنید."""
     )
-
-
 #=========================
 # دریافت رسید
 #=========================
