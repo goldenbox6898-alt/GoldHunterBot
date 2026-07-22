@@ -944,6 +944,69 @@ async def receive_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 #=========================
+# ارسال نهایی سیگنال
+#=========================
+
+async def send_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+    user_id = query.from_user.id
+
+
+    if user_id != ADMIN_ID:
+        return
+
+
+    text = SIGNAL_TEXT.get(user_id)
+
+    if not text:
+        await query.message.reply_text(
+            "❌ سیگنالی برای ارسال وجود ندارد."
+        )
+        return
+
+
+
+    if query.data == "send_public":
+
+        await context.bot.send_message(
+            chat_id=CHANNEL,
+            text=text
+        )
+
+
+    elif query.data == "send_vip":
+
+        await context.bot.send_message(
+            chat_id=VIP_CHANNEL,
+            text=text
+        )
+
+
+    elif query.data == "send_both":
+
+        await context.bot.send_message(
+            chat_id=CHANNEL,
+            text=text
+        )
+
+        await context.bot.send_message(
+            chat_id=VIP_CHANNEL,
+            text=text
+        )
+
+
+    await query.message.reply_text(
+        "✅ سیگنال با موفقیت ارسال شد."
+    )
+
+
+    SIGNAL_TEXT.pop(user_id, None)
+    SIGNAL_TYPE.pop(user_id, None)
+#=========================
 # اجرای ربات
 #=========================
 
