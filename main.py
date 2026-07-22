@@ -908,39 +908,48 @@ async def receive_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user.id not in SIGNAL_TYPE:
         return
 
+    # جلوگیری از گرفتن دکمه‌های منو
+    menu_buttons = [
+        "📈 سیگنال VIP",
+        "💎 خرید اشتراک",
+        "👤 حساب کاربری",
+        "👥 دعوت دوستان",
+        "📚 آموزش‌ها",
+        "☎️ پشتیبانی",
+        "📢 مدیریت سیگنال"
+    ]
+
+    if update.message.text in menu_buttons:
+        return
+
 
     SIGNAL_TEXT[user.id] = update.message.text
 
 
     keyboard = [
-
         [
             InlineKeyboardButton(
                 "📢 ارسال عمومی",
                 callback_data="send_public"
             )
         ],
-
         [
             InlineKeyboardButton(
                 "🔐 ارسال VIP",
                 callback_data="send_vip"
             )
         ],
-
         [
             InlineKeyboardButton(
                 "🚀 ارسال هر دو",
                 callback_data="send_both"
             )
         ]
-
     ]
 
 
     await update.message.reply_text(
-        "✅ سیگنال دریافت شد.\n\n"
-        "انتخاب کنید کجا ارسال شود:",
+        "✅ سیگنال دریافت شد.\n\nانتخاب کنید کجا ارسال شود:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 #=========================
