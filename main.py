@@ -705,13 +705,19 @@ async def receipt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if result:
     if result[0] == "daily":
-        plan_name = "روزانه"
+            conn.close()
 
-    elif result[0] == "weekly":
-        plan_name = "هفتگی"
+    plan_name = "نامشخص"
 
-    elif result[0] == "monthly":
-        plan_name = "ماهانه"
+    if result:
+        if result[0] == "daily":
+            plan_name = "روزانه"
+
+        elif result[0] == "weekly":
+            plan_name = "هفتگی"
+
+        elif result[0] == "monthly":
+            plan_name = "ماهانه"
 
     keyboard = [
         [
