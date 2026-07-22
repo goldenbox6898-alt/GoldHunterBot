@@ -893,7 +893,16 @@ await query.message.reply_text(
 {SIGNAL_TYPE[user_id]}
 
 حالا مقصد ارسال را انتخاب کنید:""",
-    reply_markup=InlineKeyboardMarkup(keyboard)
+    
+
+
+
+
+
+
+
+
+reply_markup=InlineKeyboardMarkup(keyboard)
 )
 #=========================
 # دریافت متن سیگنال
