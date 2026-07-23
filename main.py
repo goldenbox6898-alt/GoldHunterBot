@@ -422,21 +422,22 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 {REF_CODE}"""
         )
-    # هدیه دعوت
-     elif text == "🎁 هدیه دعوت":
+        # هدیه دعوت
+    elif text == "🎁 هدیه دعوت":
 
-    conn = sqlite3.connect(DB)
-          cursor = conn.cursor()
+        conn = sqlite3.connect(DB)
+        cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT invites FROM users WHERE user_id=?",
-        (user.id,)
-    )
+        cursor.execute(
+            "SELECT invites FROM users WHERE user_id=?",
+            (user.id,)
+        )
 
-    result = cursor.fetchone()
-    conn.close()
+        result = cursor.fetchone()
 
-    invites = result[0] if result else 0
+        conn.close()
+
+        invites = result[0] if result else 0
 
     if invites >= 30:
         gift = "🎉 شما هدیه اشتراک ۳۰ روزه دریافت کرده‌اید."
