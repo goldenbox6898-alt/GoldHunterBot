@@ -798,6 +798,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     result = cursor.fetchone()
+
     conn.close()
 
     count = result[0] if result else 0
@@ -808,14 +809,9 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👥 تعداد دعوت:
 {count}
 
-🔗 لینک اختصاصی کانال:
+🔗 لینک اختصاصی شما:
+
 {link}
-
-🌊 ثبت نام دریا گلد:
-{DARYA_LINK}
-
-🎁 کد معرف:
-{REF_CODE}
 
 با دعوت دوستان هدیه دریافت کنید."""
     )
