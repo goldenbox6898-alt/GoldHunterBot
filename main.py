@@ -477,8 +477,28 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "📚 آموزش‌ها":
 
+        keyboard = [
+
+            [
+                InlineKeyboardButton(
+                    "🎥 آموزش آنلاین و لایو",
+                    callback_data="learn_online"
+                )
+            ],
+
+            [
+                InlineKeyboardButton(
+                    "🏢 آموزش حضوری و خصوصی",
+                    callback_data="learn_private"
+                )
+            ]
+
+        ]
+
+
         await update.message.reply_text(
-            "📚 بخش آموزش‌ها به‌زودی فعال می‌شود."
+            "📚 روش آموزش را انتخاب کنید:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
 
@@ -493,13 +513,91 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-    # =========================
-    # مدیریت سیگنال
-    # =========================
+# =========================
+# مدیریت سیگنال
+# =========================
 
-    elif text == "📢 مدیریت سیگنال":
+async def signal_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-        await signal_menu(update, context)
+    if update.effective_user.id != ADMIN_ID:
+        return
+
+
+    keyboard = [
+
+        [
+            InlineKeyboardButton(
+                "📢 کانال عمومی",
+                callback_data="channel_public"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "💎 کانال VIP",
+                callback_data="channel_vip"
+            )
+        ]
+
+    ]
+
+
+    await update.message.reply_text(
+        "📡 مقصد ارسال سیگنال را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+# =========================
+# انتخاب مقصد و نوع سیگنال
+# =========================
+
+async def signal_channel_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+
+    if query.from_user.id != ADMIN_ID:
+        return
+
+
+    if query.data == "channel_public":
+
+        SIGNAL_TYPE[ADMIN_ID] = {
+            "channel": CHANNEL
+        }
+
+
+    elif query.data == "channel_vip":
+
+        SIGNAL_TYPE[ADMIN_ID] = {
+            "channel": VIP_CHANNEL
+        }
+
+
+    keyboard = [
+
+        [
+            InlineKeyboardButton(
+                "🟢 سیگنال خرید",
+                callback_data="send_buy"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "🔴 سیگنال فروش",
+                callback_data="send_sell"
+            )
+        ]
+
+    ]
+
+
+    await query.message.reply_text(
+        "نوع سیگنال را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 # =========================
 # انتخاب پلن خرید
 # =========================
@@ -818,14 +916,18 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
 
 
+    if user_id not in SIGNAL_TYPE:
+        SIGNAL_TYPE[user_id] = {}
+
+
     if query.data == "send_buy":
 
-        SIGNAL_TYPE[user_id] = "🟢 خرید"
+        SIGNAL_TYPE[user_id]["type"] = "🟢 خرید"
 
 
     elif query.data == "send_sell":
 
-        SIGNAL_TYPE[user_id] = "🔴 فروش"
+        SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
 
 
     await query.message.reply_text(
@@ -848,16 +950,40 @@ async def send_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
 
-    signal_type = SIGNAL_TYPE[user.id]
+    data = SIGNAL_TYPE[user.id]
+
+
+    if "channel" not in data or "type" not in data:
+        return
+
+
+    channel = data["channel"]
+
+    signal_type = data["type"]
 
     text = update.message.text
 
 
-    signal = f"""🥇 Gold Hunter | شکارچی مظنه طلا 🏅
+
+    if signal_type == "🟢 خرید":
+
+        banner = """
+🟢🟢🟢 سیگنال خرید 🟢🟢🟢
+"""
 
 
-{signal_type} سیگنال جدید
+    else:
 
+        banner = """
+🔴🔴🔴 سیگنال فروش 🔴🔴🔴
+"""
+
+
+
+    signal = f"""
+🥇 Gold Hunter | شکارچی مظنه طلا 🏅
+
+{banner}
 
 ━━━━━━━━━━━━━━
 
@@ -865,32 +991,76 @@ async def send_signal(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━
 
-⚡ مدیریت سرمایه را رعایت کنید.
+⚠️ مدیریت سرمایه فراموش نشود.
 
 @GoldHunter68980
 """
 
 
     await context.bot.send_message(
-
-        chat_id=VIP_CHANNEL,
-
+        chat_id=channel,
         text=signal
-
     )
 
 
     await update.message.reply_text(
-        "✅ سیگنال با موفقیت در کانال VIP ارسال شد."
+        "✅ سیگنال با موفقیت ارسال شد."
     )
 
 
     del SIGNAL_TYPE[user.id]
+# =========================
+# پاسخ آموزش‌ها
+# =========================
+
+async def learning_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+
+    if query.data == "learn_online":
+
+        await query.message.reply_text(
+            """🎥 آموزش آنلاین و لایو
+
+✅ آموزش بازارهای مالی
+✅ Smart Money Concept
+✅ ICT
+✅ تحلیل تکنیکال و پرایس اکشن
+
+📌 برگزاری آنلاین با هماهنگی قبلی
+
+برای شرایط و ثبت‌نام:
+☎️ @MazanhGoldAcademy"""
+        )
+
+
+    elif query.data == "learn_private":
+
+        await query.message.reply_text(
+            """🏢 آموزش حضوری و خصوصی
+
+✅ آموزش کاملاً شخصی‌سازی شده
+✅ تعداد محدود هنرجو
+✅ رفع اشکال و همراهی مستقیم
+
+📌 برای اطلاع از شرایط، زمان‌بندی و هزینه:
+
+☎️ @MazanhGoldAcademy"""
+        )
 app = Application.builder().token(TOKEN).build()
 
 # دستورات
 app.add_handler(CommandHandler("start", start))
-
+# آموزش‌ها
+app.add_handler(
+    CallbackQueryHandler(
+        learning_select,
+        pattern="^(learn_online|learn_private)$"
+    )
+)
 # عضویت
 app.add_handler(CallbackQueryHandler(check, pattern="^check$"))
 
