@@ -455,7 +455,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # هدیه دعوت
     # =========================
 
-          elif text == "🎁 هدیه دعوت":
+    elif text == "🎁 هدیه دعوت":
 
         conn = sqlite3.connect(DB)
         cursor = conn.cursor()
@@ -469,21 +469,29 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         conn.close()
 
+
         invites = result[0] if result else 0
 
+
         if invites >= 30:
+
             gift = "🎉 هدیه شما: ۳۰ روز اشتراک VIP"
 
         elif invites >= 15:
+
             gift = "🎉 هدیه شما: ۷ روز اشتراک VIP"
 
         elif invites >= 5:
+
             gift = "🎉 هدیه شما: ۱ روز اشتراک VIP"
 
         else:
+
             gift = "❌ هنوز به حد نصاب نرسیده‌اید."
 
+
         await update.message.reply_text(
+
             f"""🎁 هدیه دعوت
 
 👥 دعوت موفق:
