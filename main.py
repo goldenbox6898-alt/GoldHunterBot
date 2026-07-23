@@ -787,7 +787,9 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "👥 دعوت دوستان":
 
-link = f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
+link = 
+
+f"https://t.me/GoldHunterMazanhSignalBot?start={user.id}"
 
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
