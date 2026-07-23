@@ -294,22 +294,24 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 {REF_CODE}"""
         )
 
-    # آموزش‌ها
+        # آموزش‌ها
     elif text == "📚 آموزش‌ها":
 
-    await update.message.reply_text(
-        "📚 بخش آموزش‌ها به‌زودی فعال می‌شود."
-    )
+        await update.message.reply_text(
+            "📚 بخش آموزش‌ها به‌زودی فعال می‌شود."
+        )
 
-elif text == "📢 مدیریت سیگنال":
+    # مدیریت سیگنال
+    elif text == "📢 مدیریت سیگنال":
 
-    await signal_menu(update, context)
+        await signal_menu(update, context)
 
-elif text == "☎️ پشتیبانی":
+    # پشتیبانی
+    elif text == "☎️ پشتیبانی":
 
-    await update.message.reply_text(
-        "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
-    )
+        await update.message.reply_text(
+            "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
+        )
 # =========================
 # انتخاب پلن خرید
 # =========================
