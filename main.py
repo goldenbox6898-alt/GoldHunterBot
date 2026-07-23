@@ -125,8 +125,8 @@ def main_menu():
     keyboard = [
         ["📈 سیگنال VIP", "💎 خرید اشتراک"],
         ["👤 حساب کاربری", "👥 دعوت دوستان"],
-        ["📚 آموزش‌ها", "☎️ پشتیبانی"],
-        ["📢 مدیریت سیگنال"],
+        ["🎁 هدیه دعوت", "📚 آموزش‌ها"],
+        ["☎️ پشتیبانی", "📢 مدیریت سیگنال"],
     ]
 
     return ReplyKeyboardMarkup(
@@ -241,7 +241,47 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
+# سیگنال VIP
+if text == "📈 سیگنال VIP":
 
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT vip,vip_end FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    data = cursor.fetchone()
+    conn.close()
+
+    if data and data[0] == 1:
+
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    "💎 ورود به کانال VIP",
+                    url=VIP_LINK
+                )
+            ]
+        ]
+
+        await update.message.reply_text(
+            f"""✅ اشتراک شما فعال است.
+
+📅 پایان اشتراک:
+{data[1]}""",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    else:
+
+        await update.message.reply_text(
+            "⛔ اشتراک VIP شما فعال نیست.\n\nابتدا از بخش 💎 خرید اشتراک، اشتراک خود را تهیه کنید."
+        )
+
+# خرید اشتراک
+elif text == "💎 خرید اشتراک":
     # خرید اشتراک
     if text == "💎 خرید اشتراک":
 
@@ -257,10 +297,33 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # حساب کاربری
-    elif text == "👤 حساب کاربری":
+        elif text == "👤 حساب کاربری":
 
-        await update.message.reply_text(
-            f"""👤 حساب کاربری
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT vip,vip_end,invites FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    data = cursor.fetchone()
+
+    conn.close()
+
+    vip = "عادی"
+    end = "-"
+    invites = 0
+
+    if data:
+        if data[0] == 1:
+            vip = "VIP"
+
+        end = data[1] if data[1] else "-"
+        invites = data[2]
+
+    await update.message.reply_text(
+        f"""👤 حساب کاربری
 
 🆔 آیدی:
 {user.id}
@@ -272,8 +335,14 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @{user.username if user.username else "ندارد"}
 
 💎 وضعیت اشتراک:
-عادی"""
-        )
+{vip}
+
+📅 پایان اشتراک:
+{end}
+
+👥 دعوت موفق:
+{invites}"""
+    )
 
     # دعوت دوستان
     elif text == "👥 دعوت دوستان":
@@ -293,7 +362,89 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🎁 کد معرف:
 {REF_CODE}"""
         )
+    # هدیه دعوت
+    elif text == "🎁 هدیه دعوت":
 
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT invites FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    result = cursor.fetchone()
+    conn.close()
+
+    invites = result[0] if result else 0
+
+    if invites >= 30:
+        gift = "🎉 شما هدیه اشتراک ۳۰ روزه دریافت کرده‌اید."
+
+    elif invites >= 15:
+        gift = "🎉 شما هدیه اشتراک ۷ روزه دریافت کرده‌اید."
+
+    elif invites >= 5:
+        gift = "🎉 شما هدیه اشتراک ۱ روزه دریافت کرده‌اید."
+
+    else:
+        gift = "❌ هنوز به حد نصاب نرسیده‌اید."
+
+    await update.message.reply_text(
+elif text == "🎁 هدیه دعوت":
+
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT invites FROM users WHERE user_id=?",
+        (user.id,)
+    )
+
+    result = cursor.fetchone()
+    conn.close()
+
+    invites = result[0] if result else 0
+
+    if invites >= 30:
+        gift = "🎉 هدیه شما: ۳۰ روز اشتراک VIP"
+    elif invites >= 15:
+        gift = "🎉 هدیه شما: ۷ روز اشتراک VIP"
+    elif invites >= 5:
+        gift = "🎉 هدیه شما: ۱ روز اشتراک VIP"
+    else:
+        gift = "❌ هنوز هدیه‌ای فعال نشده است."
+
+    await update.message.reply_text(
+        f"""🎁 هدیه دعوت
+
+👥 دعوت موفق:
+{invites}
+
+{gift}
+
+🏆 قوانین هدیه:
+
+✅ ۵ دعوت = ۱ روز VIP
+✅ ۱۵ دعوت = ۷ روز VIP
+✅ ۳۰ دعوت = ۳۰ روز VIP"""
+    )
+        f"""🎁 هدیه دعوت
+
+👥 دعوت موفق:
+{invites}
+
+🏆 شرایط هدیه:
+
+✅ ۵ دعوت = ۱ روز VIP
+✅ ۱۵ دعوت = ۷ روز VIP
+✅ ۳۰ دعوت = ۳۰ روز VIP
+
+━━━━━━━━━━━━━━
+
+{gift}
+"""
+    )
     # آموزش‌ها
     elif text == "📚 آموزش‌ها":
 
@@ -406,17 +557,60 @@ async def vip_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data.startswith("vip_"):
 
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=f"""🎉 پرداخت شما تایید شد.
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
 
-✅ اشتراک VIP شما فعال شد.
+    cursor.execute(
+        "SELECT plan FROM users WHERE user_id=?",
+        (user_id,)
+    )
+
+    result = cursor.fetchone()
+
+    plan = result[0] if result else "daily"
+
+    days = {
+        "daily": 1,
+        "weekly": 7,
+        "monthly": 30
+    }
+
+    end_date = datetime.now() + timedelta(days=days[plan])
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET vip=1,
+            vip_end=?
+        WHERE user_id=?
+        """,
+        (
+            end_date.strftime("%Y-%m-%d"),
+            user_id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=f"""🎉 پرداخت شما تایید شد.
+
+✅ اشتراک VIP فعال شد.
+
+📅 پایان اشتراک:
+{end_date.strftime("%Y-%m-%d")}
 
 🔐 لینک کانال VIP:
 
 {VIP_LINK}
 """
-        )
+    )
+
+    await query.edit_message_caption(
+        caption="✅ پرداخت تایید شد."
+    )
 
         await query.edit_message_caption(
             caption="✅ پرداخت تایید شد."
