@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 # تنظیمات ربات
 # =========================
 
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN =("8756565610:AAE3z07ZfitagcdHrDK0DlG7H80pnL5unz4")
 
 CHANNEL = "@GoldHunter68980"
 
