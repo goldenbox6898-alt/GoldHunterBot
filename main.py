@@ -104,6 +104,7 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.delete_message()
 async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
+    user = update.effective_user
 
     if text == "💎 خرید اشتراک":
         await update.message.reply_text(
@@ -118,9 +119,9 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 📅 ماهانه
 1,890,000 تومان
 
-💳 شماره کارت:
+💳 شماره کارت
 
-6219 8619 0960 4646
+6219861909604646
 
 👤 داود شکوری مقدم
 
@@ -131,6 +132,54 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text == "☎️ پشتیبانی":
         await update.message.reply_text(
             "☎️ پشتیبانی\n\n@MazanhGoldAcademy"
+        )
+
+    elif text == "👤 حساب کاربری":
+        await update.message.reply_text(
+            f"""👤 حساب کاربری
+
+🆔 آیدی:
+{user.id}
+
+👤 نام:
+{user.first_name}
+
+💎 اشتراک:
+عادی
+
+📅 وضعیت:
+فعال"""
+        )
+
+    elif text == "👥 دعوت دوستان":
+        bot = await context.bot.get_me()
+
+        await update.message.reply_text(
+            f"""👥 دعوت دوستان
+
+لینک اختصاصی دعوت شما:
+
+https://t.me/{bot.username}?start={user.id}
+
+با دعوت دوستان در آینده هدیه دریافت خواهید کرد 🎁"""
+        )
+
+    elif text == "📚 آموزش‌ها":
+        await update.message.reply_text(
+            """📚 بخش آموزش
+
+به زودی آموزش‌های رایگان و حرفه‌ای ICT و Smart Money داخل این بخش قرار می‌گیرد.
+
+🎓 در حال تکمیل..."""
+        )
+
+    elif text == "📈 سیگنال VIP":
+        await update.message.reply_text(
+            """🔒 این بخش مخصوص اعضای VIP است.
+
+برای دسترسی ابتدا اشتراک تهیه کنید.
+
+💎 از منوی «خرید اشتراک» اقدام کنید."""
         )
 
 app = Application.builder().token(TOKEN).build()
