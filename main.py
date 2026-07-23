@@ -485,14 +485,6 @@ app.add_handler(
     group=0
 )
 
-# مدیریت سیگنال
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        receive_signal
-    ),
-    group=1
-)
 
 # دریافت رسید پرداخت
 app.add_handler(
