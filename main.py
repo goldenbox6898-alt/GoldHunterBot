@@ -132,12 +132,9 @@ def main_menu(user_id=None):
     ]
 
     if user_id == ADMIN_ID:
-
-    keyboard.append(["📢 مدیریت سیگنال"])
-
-    keyboard.append(["📊 آمار ربات"])
-
-    keyboard.append(["📨 پیام همگانی"])
+        keyboard.append(["📢 مدیریت سیگنال"])
+        keyboard.append(["📊 آمار ربات"])
+        keyboard.append(["📨 پیام همگانی"])
 
     return ReplyKeyboardMarkup(
         keyboard,
