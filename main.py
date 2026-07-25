@@ -1404,7 +1404,7 @@ app.add_handler(
 # پیام‌های متنی
 app.add_handler(
     MessageHandler(
-        (filters.TEXT | filters.PHOTO) & ~filters.COMMAND,
+        filters.TEXT & ~filters.COMMAND,
         buttons
     ),
     group=0
