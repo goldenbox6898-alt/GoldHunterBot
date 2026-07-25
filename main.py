@@ -1136,45 +1136,42 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     await query.answer()
 
-
     user_id = query.from_user.id
-
-    SIGNAL_DATA[user_id] = {}
 
     if user_id != ADMIN_ID:
         return
 
-
-    if user_id not in SIGNAL_TYPE:
-        SIGNAL_TYPE[user_id] = {}
+    SIGNAL_TYPE[user_id] = {}
+    SIGNAL_DATA[user_id] = {}
 
 
     if query.data == "send_buy":
 
-    SIGNAL_TYPE[user_id]["type"] = "🟢 خرید"
-    SIGNAL_DATA[user_id]["type"] = "🟢 خرید"
+        SIGNAL_TYPE[user_id]["type"] = "🟢 خرید"
+        SIGNAL_DATA[user_id]["type"] = "🟢 خرید"
 
 
-elif query.data == "send_sell":
+    elif query.data == "send_sell":
 
-    SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
-    SIGNAL_DATA[user_id]["type"] = "🔴 فروش"
+        SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
+        SIGNAL_DATA[user_id]["type"] = "🔴 فروش"
 
 
     keyboard = [
-    [
-        InlineKeyboardButton(
-            "🟡 انس جهانی",
-            callback_data="market_xau"
-        )
-    ],
-    [
-        InlineKeyboardButton(
-            "🟠 مظنه",
-            callback_data="market_maz"
-        )
-    ],
-]
+        [
+            InlineKeyboardButton(
+                "🟡 انس جهانی",
+                callback_data="market_xau"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "🟠 مظنه",
+                callback_data="market_maz"
+            )
+        ],
+    ]
+
 
     await query.message.reply_text(
         "📊 بازار را انتخاب کنید:",
