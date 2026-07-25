@@ -418,7 +418,12 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
+    elif text == "📢 مدیریت سیگنال":
 
+        if user.id != ADMIN_ID:
+            return
+
+        await signal_menu(update, context)
 
     # =========================
     # سیگنال VIP
