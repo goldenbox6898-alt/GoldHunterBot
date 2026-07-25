@@ -1139,6 +1139,7 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     user_id = query.from_user.id
 
+SIGNAL_DATA[user_id] = {}
 
     if user_id != ADMIN_ID:
         return
@@ -1150,12 +1151,14 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     if query.data == "send_buy":
 
-        SIGNAL_TYPE[user_id]["type"] = "🟢 خرید"
+    SIGNAL_TYPE[user_id]["type"] = "🟢 خرید"
+    SIGNAL_DATA[user_id]["type"] = "🟢 خرید"
 
 
-    elif query.data == "send_sell":
+elif query.data == "send_sell":
 
-        SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
+    SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
+    SIGNAL_DATA[user_id]["type"] = "🔴 فروش"
 
 
     keyboard = [
@@ -1461,10 +1464,5 @@ app.add_handler(
 print("🤖 Gold Hunter Bot Started")
 
 init_db()
-app.add_handler(
-    CallbackQueryHandler(
-        signal_type,
-        pattern="^send_"
-    )
-)
+
 app.run_polling()
