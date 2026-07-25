@@ -31,8 +31,7 @@ VIP_CHANNEL = -1004306822405
 ADMIN_ID = 7913800180
 
 DB = "users.db"
-CHANNEL = "آیدی کانال عمومی"
-VIP_CHANNEL = "آیدی کانال VIP"
+
 VIP_LINK = "https://t.me/+gPsx8C4YirZlMWY0"
 
 DARYA_LINK = "https://daryagold.com/login?ref=GoldHunter"
@@ -352,8 +351,10 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🎯 تارگت چهارم (TP4) را وارد کنید:"
         )
 
-        return
-        if SIGNAL_STEP.get(user.id) == "tp4":
+                return
+
+
+    if SIGNAL_STEP.get(user.id) == "tp4":
 
         SIGNAL_DATA[user.id]["tp4"] = text
 
@@ -381,8 +382,6 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
-
-    return
         # حالت ارسال پیام همگانی
     if BROADCAST_MODE.get(user.id):
 
