@@ -1173,10 +1173,12 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
     ],
 ]
 
-await query.message.reply_text(
-    "📊 بازار را انتخاب کنید:",
-    reply_markup=InlineKeyboardMarkup(keyboard)
-)
+    await query.message.reply_text(
+        "📊 بازار را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+
 async def signal_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
