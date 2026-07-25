@@ -1158,9 +1158,25 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
         SIGNAL_TYPE[user_id]["type"] = "🔴 فروش"
 
 
-    await query.message.reply_text(
-        "📝 متن سیگنال را ارسال کنید:"
-    )
+    keyboard = [
+    [
+        InlineKeyboardButton(
+            "🟡 انس جهانی",
+            callback_data="market_xau"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "🟠 مظنه",
+            callback_data="market_maz"
+        )
+    ],
+]
+
+await query.message.reply_text(
+    "📊 بازار را انتخاب کنید:",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
 async def signal_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
