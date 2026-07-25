@@ -41,6 +41,7 @@ REF_CODE = "99013"
 # حافظه موقت سیگنال
 SIGNAL_TYPE = {}
 SIGNAL_TEXT = {}
+BROADCAST_MODE = {}
 # =========================
 # ساخت دیتابیس
 # =========================
@@ -121,14 +122,22 @@ def add_user(user, inviter=None):
 # منوی اصلی
 # =========================
 
-def main_menu():
+def main_menu(user_id=None):
 
     keyboard = [
         ["📈 سیگنال VIP", "💎 خرید اشتراک"],
         ["👤 حساب کاربری", "👥 دعوت دوستان"],
         ["🎁 هدیه دعوت", "📚 آموزش‌ها"],
-        ["☎️ پشتیبانی", "📢 مدیریت سیگنال"],
+        ["☎️ پشتیبانی"],
     ]
+
+    if user_id == ADMIN_ID:
+
+    keyboard.append(["📢 مدیریت سیگنال"])
+
+    keyboard.append(["📊 آمار ربات"])
+
+    keyboard.append(["📨 پیام همگانی"])
 
     return ReplyKeyboardMarkup(
         keyboard,
@@ -215,7 +224,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 یکی از گزینه‌های زیر را انتخاب کنید.""",
 
-        reply_markup=main_menu()
+        reply_markup=main_menu(user.id),
     )
 # =========================
 # تایید عضویت
@@ -245,7 +254,7 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await query.message.reply_text(
         "✅ عضویت شما تایید شد.",
-        reply_markup=main_menu()
+        reply_markup=main_menu(query.from_user.id)
     )
 
 
@@ -258,6 +267,40 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
+    # حالت ارسال پیام همگانی
+    if BROADCAST_MODE.get(user.id):
+
+        BROADCAST_MODE.pop(user.id)
+
+        conn = sqlite3.connect(DB)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT user_id FROM users")
+        users = cursor.fetchall()
+
+        conn.close()
+
+        sent = 0
+failed = 0
+
+        for u in users:
+            try:
+                await context.bot.send_message(
+                    chat_id=u[0],
+                    text=text
+                )
+                sent += 1
+            except:
+    failed += 1
+
+        await update.message.reply_text(
+    f"""✅ پیام همگانی پایان یافت.
+
+📨 ارسال موفق: {sent}
+
+❌ ناموفق: {failed}
+"""
+)
 
 
     # =========================
@@ -512,7 +555,46 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "☎️ پشتیبانی:\n\n@MazanhGoldAcademy"
         )
 
+    elif text == "📊 آمار ربات":
 
+        if user.id != ADMIN_ID:
+            return
+
+        conn = sqlite3.connect(DB)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM users")
+        total_users = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM users WHERE vip=1")
+        vip_users = cursor.fetchone()[0]
+
+        cursor.execute("SELECT SUM(invites) FROM users")
+        total_invites = cursor.fetchone()[0] or 0
+
+        conn.close()
+
+        await update.message.reply_text(
+            f"""📊 آمار ربات
+
+👥 کل کاربران: {total_users}
+
+💎 کاربران VIP: {vip_users}
+
+🎁 مجموع دعوت‌های موفق: {total_invites}
+"""
+        )
+    # پیام همگانی
+    elif text == "📨 پیام همگانی":
+
+        if user.id != ADMIN_ID:
+            return
+
+        BROADCAST_MODE[user.id] = True
+
+        await update.message.reply_text(
+            "📨 پیام موردنظر را ارسال کنید.\n\nاین پیام برای تمام کاربران ربات ارسال خواهد شد."
+        )
 # =========================
 # مدیریت سیگنال
 # =========================
