@@ -353,32 +353,34 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         return
-    if SIGNAL_STEP.get(user.id) == "tp4":
+        if SIGNAL_STEP.get(user.id) == "tp4":
 
-    SIGNAL_DATA[user.id]["tp4"] = text
+        SIGNAL_DATA[user.id]["tp4"] = text
 
-    SIGNAL_STEP.pop(user.id)
+        SIGNAL_STEP.pop(user.id)
 
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                "📢 کانال عمومی",
-                callback_data="target_public"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "💎 کانال VIP",
-                callback_data="target_vip"
-            )
-        ],
-    ]
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    "📢 کانال عمومی",
+                    callback_data="target_public"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "💎 کانال VIP",
+                    callback_data="target_vip"
+                )
+            ],
+        ]
 
-    await update.message.reply_text(
-        "✅ اطلاعات سیگنال کامل شد.\n\n"
-        "📢 مقصد ارسال را انتخاب کنید:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+        await update.message.reply_text(
+            "✅ اطلاعات سیگنال کامل شد.\n\n"
+            "📢 مقصد ارسال را انتخاب کنید:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+        return
 
     return
         # حالت ارسال پیام همگانی
