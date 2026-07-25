@@ -351,7 +351,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🎯 تارگت چهارم (TP4) را وارد کنید:"
         )
 
-                return
+        return
 
 
     if SIGNAL_STEP.get(user.id) == "tp4":
