@@ -1139,7 +1139,7 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     user_id = query.from_user.id
 
-SIGNAL_DATA[user_id] = {}
+    SIGNAL_DATA[user_id] = {}
 
     if user_id != ADMIN_ID:
         return
