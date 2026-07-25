@@ -31,7 +31,8 @@ VIP_CHANNEL = -1004306822405
 ADMIN_ID = 7913800180
 
 DB = "users.db"
-
+CHANNEL = "آیدی کانال عمومی"
+VIP_CHANNEL = "آیدی کانال VIP"
 VIP_LINK = "https://t.me/+gPsx8C4YirZlMWY0"
 
 DARYA_LINK = "https://daryagold.com/login?ref=GoldHunter"
@@ -42,6 +43,10 @@ REF_CODE = "99013"
 SIGNAL_TYPE = {}
 SIGNAL_TEXT = {}
 BROADCAST_MODE = {}
+SIGNAL_DATA = {}
+SIGNAL_STEP = {}
+SIGNAL_MARKET = {}
+SIGNAL_TARGET = {}
 # =========================
 # ساخت دیتابیس
 # =========================
@@ -57,16 +62,45 @@ def init_db():
         username TEXT,
         vip INTEGER DEFAULT 0,
         vip_end TEXT,
-        plan TEXT DEFAULT 'daily',
+        plan TEXT,
         days INTEGER DEFAULT 0,
         invited_by INTEGER DEFAULT 0,
         invites INTEGER DEFAULT 0
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS settings(
+        id INTEGER PRIMARY KEY,
+        signal_number INTEGER DEFAULT 1
+    )
+    """)
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO settings(id, signal_number) VALUES(1,1)"
+    )
+
+    conn.commit()
+    conn.close()
+def get_signal_number():
+
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT signal_number FROM settings WHERE id=1"
+    )
+
+    number = cursor.fetchone()[0]
+
+    cursor.execute(
+        "UPDATE settings SET signal_number=signal_number+1 WHERE id=1"
+    )
+
     conn.commit()
     conn.close()
 
+    return number
 
 # =========================
 # افزودن کاربر
@@ -262,8 +296,91 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    text = update.message.text
+    text = update.message.text or update.message.caption
     user = update.effective_user
+    if SIGNAL_STEP.get(user.id) == "entry":
+
+        SIGNAL_DATA[user.id]["entry"] = text
+
+        SIGNAL_STEP[user.id] = "sl"
+
+        await update.message.reply_text(
+            "🛑 حد ضرر را وارد کنید:"
+        )
+
+        return
+    if SIGNAL_STEP.get(user.id) == "sl":
+
+        SIGNAL_DATA[user.id]["sl"] = text
+
+        SIGNAL_STEP[user.id] = "tp1"
+
+        await update.message.reply_text(
+            "🎯 تارگت اول (TP1) را وارد کنید:"
+        )
+
+        return
+    if SIGNAL_STEP.get(user.id) == "tp1":
+
+        SIGNAL_DATA[user.id]["tp1"] = text
+
+        SIGNAL_STEP[user.id] = "tp2"
+
+        await update.message.reply_text(
+            "🎯 تارگت دوم (TP2) را وارد کنید:"
+        )
+
+        return
+    if SIGNAL_STEP.get(user.id) == "tp2":
+
+        SIGNAL_DATA[user.id]["tp2"] = text
+
+        SIGNAL_STEP[user.id] = "tp3"
+
+        await update.message.reply_text(
+            "🎯 تارگت سوم (TP3) را وارد کنید:"
+        )
+
+        return
+    if SIGNAL_STEP.get(user.id) == "tp3":
+
+        SIGNAL_DATA[user.id]["tp3"] = text
+
+        SIGNAL_STEP[user.id] = "tp4"
+
+        await update.message.reply_text(
+            "🎯 تارگت چهارم (TP4) را وارد کنید:"
+        )
+
+        return
+    if SIGNAL_STEP.get(user.id) == "tp4":
+
+    SIGNAL_DATA[user.id]["tp4"] = text
+
+    SIGNAL_STEP.pop(user.id)
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "📢 کانال عمومی",
+                callback_data="target_public"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "💎 کانال VIP",
+                callback_data="target_vip"
+            )
+        ],
+    ]
+
+    await update.message.reply_text(
+        "✅ اطلاعات سیگنال کامل شد.\n\n"
+        "📢 مقصد ارسال را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+    return
         # حالت ارسال پیام همگانی
     if BROADCAST_MODE.get(user.id):
 
@@ -673,7 +790,31 @@ async def signal_channel_select(update: Update, context: ContextTypes.DEFAULT_TY
         ]
 
     ]
+async def signal_type(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    query = update.callback_query
+    await query.answer()
+
+    SIGNAL_DATA[query.from_user.id] = {}
+
+    if query.data == "send_buy":
+        SIGNAL_DATA[query.from_user.id]["type"] = "🟢 خرید"
+    else:
+        SIGNAL_DATA[query.from_user.id]["type"] = "🔴 فروش"
+
+    keyboard = [
+        [
+            InlineKeyboardButton("🟡 انس جهانی", callback_data="market_xau")
+        ],
+        [
+            InlineKeyboardButton("🟠 مظنه", callback_data="market_maz")
+        ],
+    ]
+
+    await query.message.reply_text(
+        "📊 بازار را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 
     await query.message.reply_text(
         "نوع سیگنال را انتخاب کنید:",
@@ -1014,6 +1155,99 @@ async def signal_type_select(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.message.reply_text(
         "📝 متن سیگنال را ارسال کنید:"
     )
+async def signal_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "market_xau":
+        SIGNAL_DATA[query.from_user.id]["market"] = "🟡 انس جهانی"
+    else:
+        SIGNAL_DATA[query.from_user.id]["market"] = "🟠 مظنه"
+
+    SIGNAL_STEP[query.from_user.id] = "entry"
+
+    await query.message.reply_text(
+        "💰 قیمت ورود را وارد کنید:"
+    )
+async def send_signal_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+    await query.answer()
+
+    user_id = query.from_user.id
+
+    if query.data == "target_public":
+        SIGNAL_TARGET[user_id] = CHANNEL
+        target = "📢 کانال عمومی"
+
+    elif query.data == "target_vip":
+        SIGNAL_TARGET[user_id] = VIP_CHANNEL
+        target = "💎 کانال VIP"
+
+    else:
+        return
+
+
+    data = SIGNAL_DATA[user_id]
+
+    number = get_signal_number()
+
+    now = datetime.now()
+
+    text = f"""
+🥇 Gold Hunter | شکارچی مظنه طلا 🏅
+
+📌 سیگنال #{number}
+
+📅 تاریخ:
+{now.strftime("%Y-%m-%d")}
+
+🕒 ساعت:
+{now.strftime("%H:%M")}
+
+━━━━━━━━━━━━━━
+
+{data['type']}
+
+📊 بازار:
+{data['market']}
+
+💰 ورود:
+{data['entry']}
+
+🛑 حد ضرر:
+{data['sl']}
+
+🎯 TP1:
+{data['tp1']}
+
+🎯 TP2:
+{data['tp2']}
+
+🎯 TP3:
+{data['tp3']}
+
+🎯 TP4:
+{data['tp4']}
+
+━━━━━━━━━━━━━━
+
+👤 داود شکوری مقدم
+"""
+
+    await context.bot.send_message(
+        chat_id=SIGNAL_TARGET[user_id],
+        text=text
+    )
+
+
+    await query.message.reply_text(
+        f"✅ سیگنال #{number} در {target} ارسال شد."
+    )
+
+    SIGNAL_DATA.pop(user_id)
+    SIGNAL_TARGET.pop(user_id)
 # =========================
 # ارسال سیگنال
 # =========================
@@ -1151,10 +1385,25 @@ app.add_handler(CallbackQueryHandler(plan_select, pattern="^plan_"))
 # تایید پرداخت
 app.add_handler(CallbackQueryHandler(vip_action, pattern="^(vip_|reject_)"))
 
+# انتخاب بازار سیگنال
+app.add_handler(
+    CallbackQueryHandler(
+        signal_market,
+        pattern="^market_"
+    )
+)
+
+app.add_handler(
+    CallbackQueryHandler(
+        send_signal_final,
+        pattern="^target_"
+    )
+)
+
 # پیام‌های متنی
 app.add_handler(
     MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
+        (filters.TEXT | filters.PHOTO) & ~filters.COMMAND,
         buttons
     ),
     group=0
@@ -1188,5 +1437,10 @@ app.add_handler(
 print("🤖 Gold Hunter Bot Started")
 
 init_db()
-
+app.add_handler(
+    CallbackQueryHandler(
+        signal_type,
+        pattern="^send_"
+    )
+)
 app.run_polling()
