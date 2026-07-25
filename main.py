@@ -264,7 +264,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
     user = update.effective_user
-    # حالت ارسال پیام همگانی
+        # حالت ارسال پیام همگانی
     if BROADCAST_MODE.get(user.id):
 
         BROADCAST_MODE.pop(user.id)
@@ -278,7 +278,7 @@ async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
         conn.close()
 
         sent = 0
-failed = 0
+        failed = 0
 
         for u in users:
             try:
@@ -288,16 +288,18 @@ failed = 0
                 )
                 sent += 1
             except:
-    failed += 1
+                failed += 1
 
         await update.message.reply_text(
-    f"""✅ پیام همگانی پایان یافت.
+            f"""✅ پیام همگانی پایان یافت.
 
 📨 ارسال موفق: {sent}
 
 ❌ ناموفق: {failed}
 """
-)
+        )
+
+        return
 
 
     # =========================
